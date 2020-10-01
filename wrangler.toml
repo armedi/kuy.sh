@@ -1,0 +1,4 @@
+name = "shorten"
+type = "webpack"
+routes = ["kuy.sh/*", "www.kuy.sh/*"]
+webpack_config = "webpack.config.js"
