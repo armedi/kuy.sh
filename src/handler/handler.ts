@@ -14,6 +14,7 @@ export const createHandler = (db: DB) => {
 
   const handleGET = async (request: Request) => {
     const pathname = new URL(request.url).pathname
+
     let location: string
     try {
       const redirect = await db.get(pathname)
@@ -21,6 +22,7 @@ export const createHandler = (db: DB) => {
     } catch (error) {
       location = 'https://www.kuy.app'
     }
+
     return new Response(null, {
       status: 301,
       headers: { Location: location },
@@ -32,11 +34,8 @@ export const createHandler = (db: DB) => {
   }
 
   const handlePOST = async (request: Request) => {
-    let link: string = ''
-
     try {
-      const body = (await request.json()) as ShortenLinkDTO
-      link = body.link
+      const { link } = (await request.json()) as ShortenLinkDTO
 
       let redirect: Redirect
       do {

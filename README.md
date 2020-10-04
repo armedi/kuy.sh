@@ -17,7 +17,13 @@ workers_dev = true
 route = ""
 ```
 
-From the terminal run
+Create faunaDB collection and index
+
+```bash
+node scripts/setupDb.js
+```
+
+Run in development mode
 
 ```bash
 wrangler dev
