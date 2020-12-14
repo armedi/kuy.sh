@@ -1,4 +1,7 @@
+kv_namespaces = [
+  {binding = "REDIRECTS", id = "d5ece11a6c3b412498fbc0571000126c", preview_id = "e3a16a7517114c5eb486335c37c8170a"},
+]
 name = "shorten"
-type = "webpack"
 routes = ["kuy.sh/*", "www.kuy.sh/*"]
+type = "webpack"
 webpack_config = "webpack.config.js"

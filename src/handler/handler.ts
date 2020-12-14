@@ -1,5 +1,10 @@
 import { DB } from '../db'
-import { createRedirect, InvalidURLError, Redirect } from '../redirect'
+import {
+  createRedirect,
+  InvalidURLError,
+  DuplicateLinkError,
+  Redirect,
+} from '../redirect'
 
 export const createHandler = (db: DB) => {
   const handleRequest = async (request: Request): Promise<Response> => {
@@ -23,33 +28,40 @@ export const createHandler = (db: DB) => {
       location = 'https://www.kuy.app'
     }
 
-    return new Response(null, {
-      status: 301,
-      headers: { Location: location },
-    })
+    return Response.redirect(location, 301)
   }
 
   interface ShortenLinkDTO {
     link: string
+    shortLink: string
   }
 
   const handlePOST = async (request: Request) => {
     try {
-      const { link } = (await request.json()) as ShortenLinkDTO
+      const { link, shortLink } = (await request.json()) as ShortenLinkDTO
 
       let redirect: Redirect
-      do {
-        redirect = createRedirect({ to: link })
-      } while (await db.exists(redirect.from))
 
-      const result = await db.save(redirect)
+      if (shortLink) {
+        if (await db.exists(shortLink)) {
+          throw new DuplicateLinkError(shortLink)
+        } else {
+          redirect = createRedirect({ from: shortLink, to: link })
+        }
+      } else {
+        do {
+          redirect = createRedirect({ to: link })
+        } while (await db.exists(redirect.from))
+      }
+
+      await db.save(redirect)
 
       return JSONResponse(
         {
           success: true,
           data: {
-            link: result.to,
-            shortLink: result.from,
+            link: redirect.to,
+            shortLink: redirect.from,
           },
         },
         201,
@@ -57,7 +69,10 @@ export const createHandler = (db: DB) => {
     } catch (error) {
       let message = 'Something went wrong'
 
-      if (error instanceof InvalidURLError) {
+      if (
+        error instanceof InvalidURLError ||
+        error instanceof DuplicateLinkError
+      ) {
         message = error.message
       }
 

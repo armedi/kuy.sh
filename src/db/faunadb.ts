@@ -8,7 +8,7 @@ const client = new faunadb.Client({
   fetch: fetch.bind(globalThis),
 })
 
-const save = (data: Redirect): Promise<Redirect> => {
+const save = (data: Redirect): Promise<void> => {
   return client.query(
     q.Select('data', q.Create(q.Collection('redirects'), { data })),
   )

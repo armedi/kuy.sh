@@ -57,3 +57,10 @@ export class InvalidURLError extends Error {
     this.name = 'InvalidURLError'
   }
 }
+
+export class DuplicateLinkError extends Error {
+  constructor(url: string) {
+    super(`${url} is taken. You can try again with different link.`)
+    this.name = 'DuplicatedLinkError'
+  }
+}

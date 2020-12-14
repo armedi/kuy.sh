@@ -1,4 +1,4 @@
-import { db } from '../db'
+import { kv } from '../db'
 import { createHandler } from './handler'
 
-export const handleRequest = createHandler(db)
+export const handleRequest = createHandler(kv)
